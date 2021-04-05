@@ -5,4 +5,3 @@ Used technologies:
 + Vanilla JS
 + Git
 + Babel
-Link to the working project: ...
