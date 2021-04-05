@@ -14,28 +14,36 @@ class App extends React.Component {
     this.downClickHandle = this.downClickHandle.bind(this);
   };
 
+  // processing of a start touch, getting start touch coordinate
   start(e) {
     document.body.style.overflow = "hidden";
-    let startCoord = e.changedTouches[0].screenY;
+    const startCoord = e.changedTouches[0].screenY;
     this.setState({ startCoord });
   }
 
+  // processing of an end touch, getting end touch coordinate
   end(e) {
     const endCoord = e.changedTouches[0].screenY;
     const diff = endCoord - this.state.startCoord;
     const navItemList = document.querySelectorAll(".nav__item");
+    
+    // if swipe to the bottom
     if (diff < -10) {
       window.scrollBy({
         "behavior": "smooth",
         "left": 0,
         "top": 768
       });
+
+      // get rid of an original swipe motion for 400 ms
+      // so everything works in a more smooth way
       setTimeout(() => document.body.style.overflow = "", 400);
       
       for (let navItem of navItemList) {
         navItem.classList.remove("nav__item_active");
       }
 
+      // change active dot of the nav accordingly
       switch(e.target.closest(".slide").classList[0]) {
         case "slide1":
           navItemList[1].classList.add("nav__item_active");
@@ -51,18 +59,23 @@ class App extends React.Component {
           break;
       }
 
+      // if swipe to the top
     } else if (diff > 10) {
       window.scrollBy({
         "behavior": "smooth",
         "left": 0,
         "top": -768
       });
+
+      // get rid of an original swipe motion for 400 ms
+      // so everything works in a more smooth way
       setTimeout(() => document.body.style.overflow = "", 400);
 
       for (let navItem of navItemList) {
         navItem.classList.remove("nav__item_active");
       }
 
+      // change active dot of the nav accordingly
       switch(e.target.closest(".slide").classList[0]) {
         case "slide1":
           navItemList[0].classList.add("nav__item_active");
@@ -80,6 +93,7 @@ class App extends React.Component {
     }
   }
 
+  // This method handles navigating using the nav section on the right
   navClickHandle(e) {
 
     for (let navItem of document.querySelectorAll(".nav__item")) {
@@ -118,6 +132,7 @@ class App extends React.Component {
     }
   }
 
+  // This method handles going to the second slide if you click on the first slide's arrow
   downClickHandle() {
     window.scrollBy({
       "behavior": "smooth",
@@ -336,6 +351,7 @@ class Slide3 extends React.Component {
 
     const bottomSlides = document.querySelector(".slide3__bottom-slides");
 
+    // This code shifts block called slide3__bottom-slides according to the value of the slider
     if (value >= 66) {
       bottomSlides.style.transform = "translateX(-2048px)"
     }
@@ -349,16 +365,18 @@ class Slide3 extends React.Component {
     }
   }
 
+  // localStart and localEnd methods check whether the start swipe touch happened
+  // on the slider. If so, we don't move up, but change slider's value accordignly.
+  // Otherwise, invoke start and end methods of App component to process actual swipe
   localStart(e) {
     document.body.style.overflow = "hidden";
     let sliderTouch = false;
 
     if (e.target.classList[0] === "slide3__slider") {
       sliderTouch = true;
-      this.setState({ sliderTouch });
-    } else {
-      this.setState({ sliderTouch });
     }
+
+    this.setState({ sliderTouch });
 
     if (!sliderTouch) {
       this.props.start(e);
@@ -371,6 +389,7 @@ class Slide3 extends React.Component {
     if (sliderTouch) {
       let value = document.querySelector(".slide3__slider").value;
 
+      // This code is getting slider's thumb to its place based on the value
       if (value >= 66) value = 100;
       if (value <= 33) value = 0;
       if (value > 33 && value < 66) value = 50;
